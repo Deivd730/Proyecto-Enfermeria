@@ -10,32 +10,32 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class NurseController extends AbstractController
 {
-    //Ruta para llamar al metodo findByName y poder buscar una enfermera por su nombre
+    // Route to call the findByName method to search for a nurse by name
     #[Route('/name/{name}', name: 'app_nurse')]
 
     /**
-     * Buscar una enfermera por su nombre en un archivo JSON.
-     *    
+     * Search for a nurse by name in a JSON file.
+     *
      * @param string $name
      * @return JsonResponse
      */
     public function findByName(string $name): JsonResponse
     {
-        // Ruta relativa al proyecto: public/nurses.json
+    // Relative project path: public/nurses.json
         $file = __DIR__ . '/../../public/nurses.json';
 
-        // Intentar leer y decodificar el JSON. `true` para obtener array asociativo.
+    // Try to read and decode the JSON. `true` to get an associative array.
         $nurses = json_decode(file_get_contents($file), true);
 
-        // Resultado por defecto: null indica no encontrado
+    // Default result: null indicates not found
         $result = null;
 
-        // Si $nurses no es un array (archivo faltante o JSON inválido), evitamos errores
+    // If $nurses is not an array (missing file or invalid JSON), avoid errors
         if (is_array($nurses)) {
             foreach ($nurses as $nurse) {
-                // Comparación estricta por nombre
+                // Strict comparison by name
                 if (isset($nurse['name']) && $nurse['name'] === $name) {
-                    // Construir el resultado con los campos requeridos
+                    // Build the result with required fields
                     $result = [
                         'name' => $nurse['name'],
                         'user' => $nurse['user'] ?? null,
@@ -47,10 +47,10 @@ final class NurseController extends AbstractController
         }
 
         if ($result) {
-            // Devolver la enfermera encontrada
+            // Return the found nurse
             return $this->json($result);
         } else {
-            // Devolver error 404 si no se encontró
+            // Return 404 error if not found
             return $this->json(['error' => 'Nurse not found'], 404);
         }
     }
